@@ -90,6 +90,40 @@ class NRSC5GUI(object):
             }
         }
 
+        # set events on info labels
+        self.lbl_audio_prgs0.set_property("name","prg0")
+        self.lbl_audio_prgs0.set_has_window(True)
+        self.lbl_audio_prgs0.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.lbl_audio_prgs0.connect("button-press-event", self.on_program_select)      
+        self.lbl_audio_prgs1.set_property("name","prg1")
+        self.lbl_audio_prgs1.set_has_window(True)
+        self.lbl_audio_prgs1.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.lbl_audio_prgs1.connect("button-press-event", self.on_program_select)
+        self.lbl_audio_prgs2.set_property("name","prg2")
+        self.lbl_audio_prgs2.set_has_window(True)
+        self.lbl_audio_prgs2.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.lbl_audio_prgs2.connect("button-press-event", self.on_program_select)
+        self.lbl_audio_prgs3.set_property("name","prg3")
+        self.lbl_audio_prgs3.set_has_window(True)
+        self.lbl_audio_prgs3.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.lbl_audio_prgs3.connect("button-press-event", self.on_program_select)
+        self.lbl_audio_svcs0.set_property("name","svc0")
+        self.lbl_audio_svcs0.set_has_window(True)
+        self.lbl_audio_svcs0.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.lbl_audio_svcs0.connect("button-press-event", self.on_program_select)
+        self.lbl_audio_svcs1.set_property("name","svc1")
+        self.lbl_audio_svcs1.set_has_window(True)
+        self.lbl_audio_svcs1.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.lbl_audio_svcs1.connect("button-press-event", self.on_program_select)
+        self.lbl_audio_svcs2.set_property("name","svc2")
+        self.lbl_audio_svcs2.set_has_window(True)
+        self.lbl_audio_svcs2.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.lbl_audio_svcs2.connect("button-press-event", self.on_program_select)
+        self.lbl_audio_svcs3.set_property("name","svc3")
+        self.lbl_audio_svcs3.set_has_window(True)
+        self.lbl_audio_svcs3.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+        self.lbl_audio_svcs3.connect("button-press-event", self.on_program_select)
+        
         # setup bookmarks listview
         name_renderer = Gtk.CellRendererText()
         name_renderer.set_property("editable", True)
@@ -306,12 +340,22 @@ class NRSC5GUI(object):
         self.stream_info["title"] = ""
         self.stream_info["album"] = ""
         self.stream_info["artist"] = ""
+        self.stream_info["genre"] = ""
         self.stream_info["cover"] = ""
         self.stream_info["logo"] = ""
         self.stream_info["bitrate"] = 0
         self.stream_num = int(self.spin_stream.get_value())-1
         if self.playing:
             self.display_logo()
+
+    def on_program_select(self, _label, evt):
+        self.spin_stream.set_value(int(_label.get_property("name")[-1])+1)
+
+    def on_program_select(self, _label, evt):
+        self.spin_stream.set_value(int(_label.get_property("name")[-1])+1)
+
+    def on_program_select(self, _label, evt):
+        self.spin_stream.set_value(int(_label.get_property("name")[-1])+1)
 
     def on_cb_auto_gain_toggled(self, btn):
         self.spin_gain.set_sensitive(not btn.get_active())
@@ -393,9 +437,8 @@ class NRSC5GUI(object):
 
     def play(self):
         self.radio = nrsc5.NRSC5(lambda type, evt: self.callback(type, evt))
-        self.radio.open(int(self.spin_rtl.get_value()))
+        self.radio.open(int(self.spin_rtl.get_value()), int(self.spin_ppm.get_value()))
         self.radio.set_auto_gain(self.cb_auto_gain.get_active())
-        self.radio.set_freq_correction(int(self.spin_ppm.get_value()))
 
         # set gain if auto gain is not selected
         if not self.cb_auto_gain.get_active():
@@ -416,6 +459,7 @@ class NRSC5GUI(object):
                 self.txt_title.set_text(self.stream_info["title"])
                 self.txt_artist.set_text(self.stream_info["artist"])
                 self.txt_album.set_text(self.stream_info["album"])
+                self.txt_genre.set_text(self.stream_info["genre"])
                 self.lbl_bitrate.set_label("{:3.1f} kbps".format(self.stream_info["bitrate"]))
                 self.lbl_bitrate2.set_label("{:3.1f} kbps".format(self.stream_info["bitrate"]))
                 self.lbl_error.set_label("{:2.2f}% Error ".format(ber[1]))
@@ -423,6 +467,34 @@ class NRSC5GUI(object):
                 self.lbl_name.set_label(self.stream_info["callsign"])
                 self.lbl_slogan.set_label(self.stream_info["slogan"])
                 self.lbl_slogan.set_tooltip_text(self.stream_info["slogan"])
+                self.lbl_message.set_label(self.stream_info["message"])
+                self.lbl_message.set_tooltip_text(self.stream_info["message"])
+                self.lbl_alert.set_label(self.stream_info["alert"])
+                self.lbl_alert.set_tooltip_text(self.stream_info["alert"])
+                self.lbl_audio_prgs0.set_label(self.stream_info["name"][0])
+                self.lbl_audio_prgs0.set_tooltip_text(self.stream_info["name"][0])
+                self.lbl_audio_prgs1.set_label(self.stream_info["name"][1])
+                self.lbl_audio_prgs1.set_tooltip_text(self.stream_info["name"][1])
+                self.lbl_audio_prgs2.set_label(self.stream_info["name"][2])
+                self.lbl_audio_prgs2.set_tooltip_text(self.stream_info["name"][2])
+                self.lbl_audio_prgs3.set_label(self.stream_info["name"][3])
+                self.lbl_audio_prgs3.set_tooltip_text(self.stream_info["name"][3])
+                self.lbl_audio_svcs0.set_label(self.stream_info["program"][0])
+                self.lbl_audio_svcs0.set_tooltip_text(self.stream_info["program"][0])
+                self.lbl_audio_svcs1.set_label(self.stream_info["program"][1])
+                self.lbl_audio_svcs1.set_tooltip_text(self.stream_info["program"][1])
+                self.lbl_audio_svcs2.set_label(self.stream_info["program"][2])
+                self.lbl_audio_svcs2.set_tooltip_text(self.stream_info["program"][2])
+                self.lbl_audio_svcs3.set_label(self.stream_info["program"][3])
+                self.lbl_audio_svcs3.set_tooltip_text(self.stream_info["program"][3])
+                self.lbl_data_svcs0.set_label(self.stream_info["data"][0])
+                self.lbl_data_svcs0.set_tooltip_text(self.stream_info["data"][0])
+                self.lbl_data_svcs1.set_label(self.stream_info["data"][1])
+                self.lbl_data_svcs1.set_tooltip_text(self.stream_info["data"][1])
+                self.lbl_data_svcs2.set_label(self.stream_info["data"][2])
+                self.lbl_data_svcs2.set_tooltip_text(self.stream_info["data"][2])
+                self.lbl_data_svcs3.set_label(self.stream_info["data"][3])
+                self.lbl_data_svcs3.set_tooltip_text(self.stream_info["data"][3])
                 self.lbl_mer_lower.set_label("{:1.2f} dB".format(self.stream_info["mer"][0]))
                 self.lbl_mer_upper.set_label("{:1.2f} dB".format(self.stream_info["mer"][1]))
                 self.lbl_ber_now.set_label("{:1.3f}% (Now)".format(ber[0]))
@@ -444,7 +516,8 @@ class NRSC5GUI(object):
                         self.img_cover.clear()
 
                 # resize and display image if it changed and exists
-                if self.xhdr_changed and self.last_image != image and os.path.isfile(image_path):
+                #if self.xhdr_changed and self.last_image != image and os.path.isfile(image_path):
+                if (self.last_image != image) and os.path.isfile(image_path):
                     self.xhdr_changed = False
                     self.last_image = image
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file(image_path)
@@ -719,6 +792,8 @@ class NRSC5GUI(object):
                     self.stream_info["artist"] = evt.artist
                 if evt.album:
                     self.stream_info["album"] = evt.album
+                if evt.genre:
+                    self.stream_info["genre"] = evt.genre
                 if evt.xhdr:
                     if evt.xhdr.param != self.last_xhdr:
                         self.last_xhdr = evt.xhdr.param
@@ -727,6 +802,7 @@ class NRSC5GUI(object):
         elif evt_type == nrsc5.EventType.SIG:
             for service in evt:
                 if service.type == nrsc5.ServiceType.AUDIO:
+                    self.stream_info["name"][service.number-1] = service.name
                     for component in service.components:
                         if component.type == nrsc5.ComponentType.DATA:
                             if component.data.mime == nrsc5.MIMEType.PRIMARY_IMAGE:
@@ -775,6 +851,17 @@ class NRSC5GUI(object):
                 self.stream_info["callsign"] = evt.name
             if evt.slogan:
                 self.stream_info["slogan"] = evt.slogan
+            if evt.message:
+                self.stream_info["message"] = evt.message
+            if evt.alert:
+                self.stream_info["alert"] = evt.alert
+            if evt.audio_services:
+                for i, audio_svc in enumerate(evt.audio_services):
+                    self.stream_info["program"][i] = nrsc5.NRSC5.program_type_name(audio_svc.type)
+            if evt.data_services:
+                for i, data_svc in enumerate(evt.data_services):
+                    self.stream_info["data"][i] = nrsc5.NRSC5.service_data_type_name(data_svc.type)
+
 
     def get_controls(self):
         # setup gui
@@ -807,8 +894,23 @@ class NRSC5GUI(object):
         self.txt_title = builder.get_object("txt_title")
         self.txt_artist = builder.get_object("txt_artist")
         self.txt_album = builder.get_object("txt_album")
+        self.txt_genre = builder.get_object("txt_genre")
         self.lbl_name = builder.get_object("lbl_name")
         self.lbl_slogan = builder.get_object("lbl_slogan")
+        self.lbl_message = builder.get_object("lbl_message")
+        self.lbl_alert = builder.get_object("lbl_alert")
+        self.lbl_audio_prgs0 = builder.get_object("lbl_audio_prgs0")
+        self.lbl_audio_prgs1 = builder.get_object("lbl_audio_prgs1")
+        self.lbl_audio_prgs2 = builder.get_object("lbl_audio_prgs2")
+        self.lbl_audio_prgs3 = builder.get_object("lbl_audio_prgs3")
+        self.lbl_audio_svcs0 = builder.get_object("lbl_audio_svcs0")
+        self.lbl_audio_svcs1 = builder.get_object("lbl_audio_svcs1")
+        self.lbl_audio_svcs2 = builder.get_object("lbl_audio_svcs2")
+        self.lbl_audio_svcs3 = builder.get_object("lbl_audio_svcs3")
+        self.lbl_data_svcs0 = builder.get_object("lbl_data_svcs0")
+        self.lbl_data_svcs1 = builder.get_object("lbl_data_svcs1")
+        self.lbl_data_svcs2 = builder.get_object("lbl_data_svcs2")
+        self.lbl_data_svcs3 = builder.get_object("lbl_data_svcs3")
         self.lbl_callsign = builder.get_object("lbl_callsign")
         self.lbl_gain = builder.get_object("lbl_gain")
         self.lbl_bitrate = builder.get_object("lbl_bitrate")
@@ -830,11 +932,17 @@ class NRSC5GUI(object):
         self.stream_info = {
             "callsign": "",
             "slogan": "",
+            "message": "",
+            "alert": "",
             "title": "",
             "album": "",
+            "genre": "",
             "artist": "",
             "cover": "",
             "logo": "",
+            "name": [" ", " ", " ", " "],
+            "program": [" ", " ", " ", " "],
+            "data": [" ", " ", " ", " "],
             "bitrate": 0,
             "mer": [0, 0],
             "ber": [0, 0, 0, 0],
@@ -854,9 +962,24 @@ class NRSC5GUI(object):
         self.txt_title.set_text("")
         self.txt_artist.set_text("")
         self.txt_album.set_text("")
+        self.txt_genre.set_text("")
         self.img_cover.clear()
         self.lbl_name.set_label("")
         self.lbl_slogan.set_label("")
+        self.lbl_message.set_label("")
+        self.lbl_alert.set_label("")
+        self.lbl_audio_prgs0.set_label("")
+        self.lbl_audio_prgs1.set_label("")
+        self.lbl_audio_prgs2.set_label("")
+        self.lbl_audio_prgs3.set_label("")
+        self.lbl_audio_svcs0.set_label("")
+        self.lbl_audio_svcs1.set_label("")
+        self.lbl_audio_svcs2.set_label("")
+        self.lbl_audio_svcs3.set_label("")
+        self.lbl_data_svcs0.set_label("")
+        self.lbl_data_svcs1.set_label("")
+        self.lbl_data_svcs2.set_label("")
+        self.lbl_data_svcs3.set_label("")
         self.lbl_slogan.set_tooltip_text("")
         self.lbl_mer_lower.set_label("")
         self.lbl_mer_upper.set_label("")
